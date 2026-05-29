@@ -40,9 +40,10 @@ export function createToolService() {
    * @param {string} conversationId - The conversation ID
    */
   const handleToolSuccess = async (toolUseResponse, toolName, toolUseId, conversationHistory, productsToDisplay, conversationId) => {
-    // Check if this is a product search result
-    if (toolName === AppConfig.tools.productSearchName) {
-      productsToDisplay.push(...processProductSearchResult(toolUseResponse));
+    // Check if any tool returns products to display them
+    const processedProducts = processProductSearchResult(toolUseResponse);
+    if (processedProducts && processedProducts.length > 0) {
+      productsToDisplay.push(...processedProducts);
     }
 
     addToolResultToHistory(conversationHistory, toolUseId, toolUseResponse.content, conversationId);
