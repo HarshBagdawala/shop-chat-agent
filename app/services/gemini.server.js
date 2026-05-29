@@ -83,11 +83,13 @@ export function createGeminiService(apiKey = process.env.GEMINI_API_KEY) {
             });
           }
         }
-      } else {
+      } else if (typeof msg.content === 'string' && msg.content.trim() !== '') {
         parts.push({ text: msg.content });
       }
-
-      formattedMessages.push({ role, parts });
+      
+      if (parts.length > 0) {
+        formattedMessages.push({ role, parts });
+      }
     }
 
     console.log("\n[Gemini] Sending messages to Gemini API...");
@@ -120,7 +122,13 @@ export function createGeminiService(apiKey = process.env.GEMINI_API_KEY) {
 
     // Process stream events
     for await (const chunk of stream) {
-      const chunkText = chunk.text();
+      let chunkText = "";
+      try {
+        chunkText = chunk.text();
+      } catch (e) {
+        // Ignore error if text is not available (e.g., when it's only a function call)
+      }
+      
       if (chunkText) {
         fullContent += chunkText;
         if (streamHandlers.onText) streamHandlers.onText(chunkText);
