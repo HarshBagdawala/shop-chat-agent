@@ -1,12 +1,13 @@
 # Learn more about configuring your app at https://shopify.dev/docs/apps/tools/cli/configuration
 
-client_id = "YOUR_CLIENT_ID"
+client_id = "64e69dc47d1bf2d31c3430f8a7b45df2"
 name = "shop-chat-agent"
 handle = "shop-chat-agent"
 application_url = "https://shop-chat-agent.com"
 embedded = true
 
 [build]
+automatically_update_urls_on_dev = true
 include_config_on_deploy = true
 
 [webhooks]

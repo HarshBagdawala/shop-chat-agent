@@ -36,6 +36,14 @@ if (host === "localhost") {
 }
 
 export default defineConfig({
+  resolve: {
+    alias: {
+      "@shopify/shopify-api/dist/esm/runtime": "@shopify/shopify-api/dist/cjs/runtime",
+      "@shopify/shopify-api/dist/esm/runtime/index.mjs": "@shopify/shopify-api/dist/cjs/runtime/index.js",
+      "@shopify/shopify-app-react-router$": "@shopify/shopify-app-react-router/dist/cjs/server/index.js",
+    },
+    extensions: [".mjs", ".js", ".ts", ".jsx", ".tsx", ".json"],
+  },
   server: {
     allowedHosts: [host],
     cors: {
@@ -53,6 +61,11 @@ export default defineConfig({
     assetsInlineLimit: 0,
   },
   optimizeDeps: {
-    include: ["@shopify/app-bridge-react"],
+    include: ["@shopify/app-bridge-react", "@shopify/shopify-app-react-router/react"],
+    esbuildOptions: {
+      loader: {
+        ".mjs": "jsx",
+      },
+    },
   },
 });

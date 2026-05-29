@@ -67,9 +67,11 @@ async function handleChatRequest(request) {
     // Get message data from request body
     const body = await request.json();
     const userMessage = body.message;
+    console.log(`\n\n💬 [Frontend -> Backend] Received New Message: "${userMessage}"`);
 
     // Validate required message
     if (!userMessage) {
+      console.error("❌ [Error] Missing user message in request.");
       return new Response(
         JSON.stringify({ error: AppConfig.errorMessages.missingMessage }),
         { status: 400, headers: getSseHeaders(request) }
@@ -126,7 +128,8 @@ async function handleChatSession({
   // Initialize MCP client
   const shopId = request.headers.get("X-Shopify-Shop-Id");
   const shopDomain = request.headers.get("Origin");
-  const { mcpApiUrl } = await getCustomerAccountUrls(shopDomain, conversationId);
+  const customerUrls = await getCustomerAccountUrls(shopDomain, conversationId);
+  const mcpApiUrl = customerUrls ? customerUrls.mcpApiUrl : null;
 
   const mcpClient = new MCPClient(
     shopDomain,
@@ -218,6 +221,8 @@ async function handleChatSession({
             const toolUseId = content.id;
 
             const toolUseMessage = `Calling tool: ${toolName} with arguments: ${JSON.stringify(toolArgs)}`;
+            console.log(`\n🛠️ [Tool Invocation] AI wants to use: ${toolName}`);
+            console.log(`[Tool Invocation] Arguments:`, toolArgs);
 
             stream.sendMessage({
               type: 'tool_use',
@@ -225,7 +230,9 @@ async function handleChatSession({
             });
 
             // Call the tool
+            console.log(`[Tool Execution] Executing ${toolName} via MCP Client...`);
             const toolUseResponse = await mcpClient.callTool(toolName, toolArgs);
+            console.log(`[Tool Execution] Finished executing ${toolName}.`);
 
             // Handle tool response based on success/error
             if (toolUseResponse.error) {
@@ -276,7 +283,9 @@ async function handleChatSession({
       });
     }
   } catch (error) {
-    // The streaming handler takes care of error handling
+    console.error("\n❌ [CRITICAL ERROR] Error in handleChatSession:", error);
+    console.error("Stack trace:", error.stack);
+    stream.sendMessage({ type: 'error', error: error.message });
     throw error;
   }
 }

@@ -481,7 +481,14 @@
             prompt_type: promptType
           });
 
-          const streamUrl = 'https://localhost:3458/chat';
+          const appUrl = window.shopChatConfig?.appUrl || '';
+          if (!appUrl) {
+            console.error('App URL not configured. Please set the App URL in the theme editor under the AI Chat Assistant block settings.');
+            ShopAIChat.UI.removeTypingIndicator();
+            ShopAIChat.Message.add("Chat is not configured yet. Please contact the store admin.", 'assistant', messagesContainer);
+            return;
+          }
+          const streamUrl = appUrl + '/chat';
           const shopId = window.shopId;
 
           const response = await fetch(streamUrl, {
@@ -630,7 +637,12 @@
           messagesContainer.appendChild(loadingMessage);
 
           // Fetch history from the server
-          const historyUrl = `https://localhost:3458/chat?history=true&conversation_id=${encodeURIComponent(conversationId)}`;
+          const appUrl = window.shopChatConfig?.appUrl || '';
+          if (!appUrl) {
+            console.error('App URL not configured.');
+            return;
+          }
+          const historyUrl = `${appUrl}/chat?history=true&conversation_id=${encodeURIComponent(conversationId)}`;
           console.log('Fetching history from:', historyUrl);
 
           const response = await fetch(historyUrl, {
@@ -779,7 +791,9 @@
           attemptCount++;
 
           try {
-            const tokenUrl = 'https://localhost:3458/auth/token-status?conversation_id=' +
+            const appUrl = window.shopChatConfig?.appUrl || '';
+            if (!appUrl) return;
+            const tokenUrl = appUrl + '/auth/token-status?conversation_id=' +
               encodeURIComponent(conversationId);
             const response = await fetch(tokenUrl);
 
