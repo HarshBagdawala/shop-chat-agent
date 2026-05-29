@@ -6,7 +6,7 @@ import MCPClient from "../mcp-client";
 import { saveMessage, getConversationHistory, storeCustomerAccountUrls, getCustomerAccountUrls as getCustomerAccountUrlsFromDb } from "../db.server";
 import AppConfig from "../services/config.server";
 import { createSseStream } from "../services/streaming.server";
-import { createClaudeService } from "../services/claude.server";
+import { createGeminiService } from "../services/gemini.server";
 import { createToolService } from "../services/tool.server";
 
 
@@ -122,7 +122,7 @@ async function handleChatSession({
   stream
 }) {
   // Initialize services
-  const claudeService = createClaudeService();
+  const geminiService = createGeminiService();
   const toolService = createToolService();
 
   // Initialize MCP client
@@ -183,7 +183,7 @@ async function handleChatSession({
     let finalMessage = { role: 'user', content: userMessage };
 
     while (finalMessage.stop_reason !== "end_turn") {
-      finalMessage = await claudeService.streamConversation(
+      finalMessage = await geminiService.streamConversation(
         {
           messages: conversationHistory,
           promptType,

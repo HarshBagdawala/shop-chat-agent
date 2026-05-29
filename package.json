@@ -24,7 +24,7 @@
     "node": ">=20.10"
   },
   "dependencies": {
-    "@anthropic-ai/sdk": "^0.40.0",
+    "@google/generative-ai": "^0.24.1",
     "@prisma/client": "^6.2.1",
     "@react-router/dev": "^7.9.1",
     "@react-router/fs-routes": "^7.9.1",

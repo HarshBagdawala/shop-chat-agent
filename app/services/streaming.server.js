@@ -55,7 +55,7 @@ export function createStreamManager(encoder, controller) {
     if (error.status === 401 || error.message.includes('auth') || error.message.includes('key')) {
       sendError({
         type: 'error',
-        error: 'Authentication failed with Claude API',
+        error: 'Authentication failed with Gemini API',
         details: 'Please check your API key in environment variables'
       });
     } else if (error.status === 429 || error.status === 529 || error.message.includes('Overloaded')) {
@@ -67,7 +67,7 @@ export function createStreamManager(encoder, controller) {
     } else {
       sendError({
         type: 'error',
-        error: 'Failed to get response from Claude',
+        error: 'Failed to get response from Gemini',
         details: error.message
       });
     }
